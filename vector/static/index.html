@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vector Search Page</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+        }
+
+        #searchForm {
+            margin-bottom: 20px;
+        }
+
+        #results {
+            width: 80%;
+            display: none;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #results li {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            margin: 10px 0;
+            list-style-type: none;
+        }
+
+        #results li:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-id {
+            font-weight: bold;
+        }
+
+        #error {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="searchForm">
+        <h1>Vector Search Engine</h1>
+        <form id="form">
+            <input type="text" id="queryInput" placeholder="Enter search query" autocomplete="off">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <ul id="results"></ul>
+    <div id="error"></div>
+
+    <script>
+        const resultsElement = document.getElementById('results');
+        const errorElement = document.getElementById('error');
+        const formElement = document.getElementById('form');
+        const queryInput = document.getElementById('queryInput');
+
+        formElement.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = queryInput.value;
+            resultsElement.style.display = 'none';
+            errorElement.textContent = '';
+
+            fetch('/v1/search/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Oh sorry, nothing found');
+                    } else if (response.status === 500) {
+                        throw new Error('Oops, something went wrong on our end');
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.results.length > 0) {
+                    const results = data.results.map(r => `
+                        <li>
+                            <div class="search-result-id">ID: ${r[0]}</div>
+                            <div>Distance: ${r[1]}</div>
+                            <div>${r[2]}</div>
+                        </li>
+                    `).join('');
+                    resultsElement.innerHTML = results;
+                    resultsElement.style.display = 'block';
+                } else {
+                    throw new Error('No results found');
+                }
+            })
+            .catch((error) => {
+                resultsElement.innerHTML = '';
+                errorElement.textContent = error.message;
+            });
+        });
+    </script>
+</body>
+</html>

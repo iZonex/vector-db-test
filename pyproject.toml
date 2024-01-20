@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "vector-db-test"
+version = "0.1.0"
+description = "vector db"
+authors = ["Dmytro Chystiakov <dlchistyakov@gmail.com>"]
+license = "free"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Wikipedia-API = "^0.6.0"
+transformers = "^4.36.2"
+torch = "^2.1.2"
+nltk = "^3.8.1"
+pymilvus = "^2.3.5"
+sentence-transformers = "^2.2.2"
+fastapi = "^0.109.0"
+uvicorn = "^0.26.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^6.2.5"
+pytest-cov = "^3.0.0"
+pytest-mock = "^3.6.1"
+pytest-flask = "^1.2.0"
+appmap = {version = "^1.18.1", allow-prereleases = true}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
