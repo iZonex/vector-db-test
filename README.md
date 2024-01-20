@@ -1,5 +1,9 @@
 # Vector
 
+
+<img width="851" alt="Screenshot 2024-01-20 at 02 25 04" src="https://github.com/iZonex/vector-db-test/assets/2759749/fb01ca8a-be78-4f54-8ab5-d6d9a561ef70">
+
+
 Vector is an API server built using FastAPI. It utilizes Milvus as its database and leverages a suite of open-source libraries and modules for its operation. The server primarily handles vector-based data querying and ranking using text matches, offering distance metrics for the matches found. It includes an integrated web form for queries, which interacts with the graph database and processes vector data.
 
 ## Dependencies
