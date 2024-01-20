@@ -12,28 +12,36 @@ from core.vectorizer import TextVectorizer
 MILVUS_HOST = os.environ.get('MILVUS_HOST', "0.0.0.0")  
 MILVUS_PORT = os.environ.get('MILVUS_PORT', "19530")
 
+# Initialize the database
 init_db(MILVUS_HOST, MILVUS_PORT)
+
 app = FastAPI()
 
-# Инициализация TextVectorizer и MilvusSearcher
+# Initialize TextVectorizer and MilvusSearcher
 text_vectorizer = TextVectorizer()
 searcher = MilvusSearcher(MILVUS_HOST, MILVUS_PORT)
 collection = searcher.get_collection('article_collection')
 
-# Модель для запроса поиска
+# Model for search request
 class SearchRequest(BaseModel):
     query: str
 
-# Настройка пути к статическим файлам
+# Configure static files path
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index():
+    """
+    Read the index page.
+    """
     print("State information: Reading index")
     return FileResponse('static/index.html')
 
 @app.post("/v1/search/")
 async def search(request: SearchRequest):
+    """
+    Perform a search based on the given query.
+    """
     print(f"State information: Performing search for query '{request.query}'")
     query_vector = text_vectorizer.vectorize_chunks([request.query])[0]
     search_results = searcher.combined_search(collection, request.query, query_vector)
